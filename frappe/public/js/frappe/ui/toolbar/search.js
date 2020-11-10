@@ -333,13 +333,7 @@ frappe.search.SearchDialog = Class.extend({
 				if(result.onclick) {
 					result.onclick(result.match);
 				} else {
-					var previous_hash = window.location.hash;
 					frappe.set_route(result.route);
-
-					// hashchange didn't fire!
-					if (window.location.hash == previous_hash) {
-						frappe.route();
-					}
 				}
 			});
 		}
