@@ -58,19 +58,9 @@ frappe.Application = Class.extend({
 		frappe.ui.keys.setup();
 		this.set_rtl();
 
-		if(frappe.boot) {
-			if(localStorage.getItem("session_last_route")) {
-				frappe.set_route(localStorage.getItem("session_last_route"));
-				localStorage.removeItem("session_last_route");
-			}
-
-		}
-
 		// page container
 		this.make_page_container();
-
-		// route to home page
-		frappe.route();
+		this.set_route();
 
 		// trigger app startup
 		$(document).trigger('startup');
@@ -140,7 +130,7 @@ frappe.Application = Class.extend({
 				});
 			}, 300000); // check every 5 minutes
 
-			if(frappe.user.has_role("System Manager")){
+			if (frappe.user.has_role("System Manager")) {
 				setInterval(function() {
 					frappe.call({
 						method: 'frappe.core.doctype.log_settings.log_settings.has_unseen_error_log',
@@ -149,7 +139,7 @@ frappe.Application = Class.extend({
 						},
 						callback: function(r) {
 							console.log(r);
-							if(r.message.show_alert){
+							if (r.message.show_alert) {
 								frappe.show_alert({
 									indicator: 'red',
 									message: r.message.message
@@ -162,6 +152,19 @@ frappe.Application = Class.extend({
 		}
 
 		this.fetch_tags();
+	},
+
+	set_route() {
+		if (frappe.boot && localStorage.getItem("session_last_route")) {
+			frappe.set_route(localStorage.getItem("session_last_route"));
+			localStorage.removeItem("session_last_route");
+		} else if (frappe._cur_route) {
+			// go to the appropriate sub-path
+			frappe.set_route(frappe._cur_route);
+		} else {
+			// route to home page
+			frappe.route();
+		}
 	},
 
 	setup_frappe_vue() {
