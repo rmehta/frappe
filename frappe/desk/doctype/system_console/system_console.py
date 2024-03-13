@@ -57,10 +57,6 @@ def execute_code(doc):
 @frappe.whitelist()
 def show_processlist():
 	frappe.only_for("System Manager")
-	return _show_processlist()
-
-
-def _show_processlist():
 	return frappe.db.multisql(
 		{
 			"postgres": """

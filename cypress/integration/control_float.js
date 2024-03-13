@@ -20,7 +20,7 @@ context("Control Float", () => {
 
 	it("check value changes", () => {
 		get_dialog_with_float().as("dialog");
-		cy.wait(300);
+		cy.wait(500);
 
 		let data = get_data();
 		data.forEach((x) => {
