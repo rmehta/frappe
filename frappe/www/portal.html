@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<!-- Built on Frappe. https://frappeframework.com/ -->
+<html lang="{{boot.lang}}" dir="{{ 'rtl' if is_rtl() else 'ltr' }}">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="generator" content="frappe">
+	<title>{% block title %}{{ title | striptags }}{% endblock %}</title>
+
+	{% block favicon %}
+	<link
+		rel="shortcut icon"
+		href="{{ (favicon or "/assets/frappe/images/frappe-favicon.svg") | abs_url }}"
+		type="image/x-icon"
+	>
+	{% endblock %}
+
+	{%- block head -%}
+		{% include "templates/includes/head.html" %}
+	{%- endblock -%}
+
+	{%- block head_include %}
+		{{ head_include or "" }}
+	{% endblock -%}
+
+	{%- block style %}
+		{% if colocated_css -%}
+			<style>{{ colocated_css }}</style>
+		{%- endif %}
+	{%- endblock -%}
+
+	{% if boot.lang == "eo" %}
+	<script type="text/javascript">
+		var _jipt = [];
+		_jipt.push(['project', 'frappe']);
+	</script>
+	<script type="text/javascript" src="https://cdn.crowdin.com/jipt/jipt.js"></script>
+	{% endif %}
+
+	<style>
+		.portal-container {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: nowrap;
+			align-items: flex-start;
+			justify-content: flex-start;
+			position: relative;
+		}
+		.portal-sidebar {
+			width: 220px;
+			background: var(--subtle-accent);
+			border-right: 1px solid var(--border-color);
+			display: flex;
+			flex-direction: column;
+			height: 100vh;
+			z-index: 1030;
+			padding: 8px 8px 10px 8px;
+		}
+		.portal-body {
+			width: 100%;
+			height: 100vh;
+			overflow: scroll;
+			overflow-x: hidden;
+			overflow-y: visible;
+		}
+		.portal-navbar {
+			height: 48px;
+			background: var(--navbar-bg);
+			border-bottom: 1px solid var(--border-color);
+			padding: 0;
+		}
+		.standard-sidebar-item {
+			padding: 3px 12px;
+			margin-bottom: 2px;
+			border-radius: var(--border-radius);
+			overflow: hidden;
+			cursor: pointer;
+		}
+
+		.standard-sidebar-item:focus-within {
+			background-color: var(--sidebar-select-color);
+			outline: 0;
+			text-decoration: none;
+		}
+
+		.standard-sidebar-item:hover {
+			background-color: var(--sidebar-select-color);
+			text-decoration: none;
+		}
+
+		.standard-sidebar-item.selected {
+			background-color: var(--sidebar-select-color);
+		}
+
+		.standard-sidebar-item a {
+			font-size: var(--text-sm);
+			color: var(--text-color);
+			text-decoration: none;
+		}
+		</style>
+
+	<script>
+		window.frappe = {};
+		window._version_number = "{{ build_version }}";
+		frappe.ready_events = [];
+		frappe.ready = function(fn) {
+			frappe.ready_events.push(fn);
+		}
+		window.dev_server = {{ dev_server }};
+		window.socketio_port = {{ (frappe.socketio_port or 9000) }};
+		window.show_language_picker = {{ show_language_picker or 'false' }};
+	</script>
+</head>
+<body frappe-session-status="{{ 'logged-in' if frappe.session.user != 'Guest' else 'logged-out'}}" data-path="{{ path | e }}" {%- if template and template.endswith('.md') %} frappe-content-type="markdown" {%- endif %} class="{{ body_class or ''}}">
+
+	<div class="portal-container">
+		<div class="portal-sidebar standard-sidebar">
+			{% for item in sidebar_items %}
+				<div class="standard-sidebar-item">
+					{%- if item.group_title -%}
+
+					<h6>{{ _(item.group_title) }}</h6>
+					{{ render_sidebar_items(item.group_items) }}
+
+					{%- else -%}
+
+					{% if item.type != 'input' %}
+					{%- set item_route = item.route[1:] if item.route[0] == '/' else item.route -%}
+					<a href="{{ item.route }}" class="{{ 'active' if pathname == item_route else '' }}"
+						{% if item.target %}target="{{ item.target }}" {% endif %}>
+						{{ _(item.title) or _(item.label) }}
+					</a>
+					{% else %}
+					<form action='{{ item.route }}' class="mr-4">
+						<input name='q' class='form-control' type='text' style="outline: none"
+							placeholder="{{ _(item.title) or _(item.label) }}">
+					</form>
+					{% endif %}
+
+					{%- endif -%}
+
+				</div>
+			{% endfor %}
+
+		</div>
+		<div class="portal-body">
+			<div class="portal-navbar">
+
+			</div>
+			<div class="portal-content">
+				{% block page_content %}
+					{{ content }}
+				{% endblock %}
+			</div>
+		</div>
+
+	</div>
+	<div id="all-symbols" style="display:none"></div>
+	{%- for path in web_include_icons -%}
+	{{ include_icons(path) }}
+	{%- endfor -%}
+
+	{% block base_scripts %}
+	<!-- js should be loaded in body! -->
+	<script>
+		frappe.boot = {{ boot | json }}
+		// for backward compatibility of some libs
+		frappe.sys_defaults = frappe.boot.sysdefaults;
+	</script>
+	{{ include_script('frappe-web.bundle.js') }}
+	{% endblock %}
+
+	{%- for link in web_include_js %}
+	{{ include_script(link) }}
+	{%- endfor -%}
+
+	{%- block script %}
+		{% if colocated_js -%}
+			<script>{{ colocated_js }}</script>
+		{%- endif %}
+	{%- endblock %}
+	<!-- csrf_token -->
+	{%- block body_include %}{{ body_include or "" }}{% endblock -%}
+</body>
+</html>

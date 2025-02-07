@@ -1,4 +1,4 @@
-.portal-row {
+.card-page-row {
 	padding: 1rem 0;
 
 	a {
@@ -6,7 +6,7 @@
 	}
 }
 
-.portal-container {
+.card-page-container {
 	max-width: 540px;
 	margin: 3rem auto;
 	padding: var(--padding-2xl);
@@ -16,11 +16,11 @@
 	box-shadow: var(--shadow-lg);
 }
 
-.portal-items {
+.card-page-items {
 	border: 1px solid var(--border-color);
 	border-radius: var(--border-radius);
 
-	.portal-section {
+	.card-page-section {
 		padding: 10px;
 		border-bottom: 1px solid var(--border-color);
 
@@ -30,7 +30,7 @@
 	}
 }
 
-.portal-section {
+.card-page-section {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -73,7 +73,7 @@
 	stroke: var(--text-light);
 }
 
-.portal-footer {
+.card-page-footer {
 	margin: var(--margin-md) auto;
 	display: flex;
 	justify-content: center;

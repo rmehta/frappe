@@ -9,14 +9,14 @@
 {% block style %}{% endblock %}
 
 {% block page_content %}
-<div class="portal-container">
-	<div class="portal-section head">
+<div class="card-page-container">
+	<div class="card-page-section head">
 		<div class="title">{{ _("Third Party Apps") }}</div>
 	</div>
-	<div class="third-party-wrapper portal-items">
+	<div class="third-party-wrapper card-page-items">
 		{% if app %}
 		<h4>{{ app.app_name }}</h4>
-		<div class="web-list-item portal-section">
+		<div class="web-list-item card-page-section">
 			<div class="row">
 				<div class="col-xs-12">
 					<div class="well">
@@ -33,7 +33,7 @@
 		{% elif apps|length > 0 %}
 		<h4>{{ _("Active Sessions") }}</h4>
 			{% for app in apps %}
-			<div class="web-list-item portal-section">
+			<div class="web-list-item card-page-section">
 				<div class="row">
 					<div class="col-xs-6">
 						{{ app.app_name }}

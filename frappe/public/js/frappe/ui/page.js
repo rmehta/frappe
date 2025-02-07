@@ -63,7 +63,7 @@ frappe.ui.Page = class Page {
 	}
 
 	get_empty_state(title, message, primary_action) {
-		return $(`<div class="page-card-container">
+		return $(`<div class="page-card-page-container">
   			<div class="page-card">
   				<div class="page-card-head">
   					<span class="indicator blue">

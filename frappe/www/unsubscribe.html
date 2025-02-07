@@ -27,8 +27,8 @@
 
 {% if status == "waiting_for_confirmation" %}
 <!-- Confirmation page to select the group to unsubscribe -->
-	<div class="portal-container ">
-		<div class='portal-section head d-block'>
+	<div class="card-page-container ">
+		<div class='card-page-section head d-block'>
 			<div class="title">{{_("Unsubscribe")}}</div>
 			<div class="text-muted">Select groups you wish to unsubscribe from ({{ email }})</div>
 			<!-- Show 'Select All' or 'Unselect All' buttons only if there are more than 5 groups -->
@@ -42,9 +42,9 @@
 					<input type="hidden" name="user_email" value="{{ email }}">
 					<input type="hidden" name="csrf_token" value="{{ frappe.session.csrf_token }}">
 					<!-- Break into columns if there are more than 20 groups -->
-					<div class="portal-items">
+					<div class="card-page-items">
 						{% for group in email_groups %}
-						<div class="checkbox portal-section d-block">
+						<div class="checkbox card-page-section d-block">
 							<label>
 								<input
 									type="checkbox"
@@ -56,7 +56,7 @@
 						</div>
 						{% endfor %}
 					</div>
-					<div class="portal-section mt-3">
+					<div class="card-page-section mt-3">
 						<button
 							type="submit"
 							id="unsubscribe"
@@ -77,22 +77,22 @@
 
 {% elif status == "unsubscribed" %}
 <!-- Unsubscribed page comes after submission -->
-	<div class="portal-container">
-		<div class='portal-section head'>
+	<div class="card-page-container">
+		<div class='card-page-section head'>
 			<div class="title">Unsubscribed</div>
 		</div>
-		<div class="portal-section">
+		<div class="card-page-section">
 			You have been unsubscribed from selected mailing list.
 		</div>
 	</div>
 
 {% else %}
 <!-- For invalid and unsigned request -->
-<div class="portal-container">
-	<div class='portal-section head'>
+<div class="card-page-container">
+	<div class='card-page-section head'>
 		<div class="title">Unsubscribe</div>
 	</div>
-	<div class="portal-section">
+	<div class="card-page-section">
 		Invalid request
 	</div>
 </div>
