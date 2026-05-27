@@ -32,7 +32,7 @@ export class DropdownConsole {
 			],
 		});
 		this.dialog.get_close_btn().show(); // framework hides it on static dialogs
-		this.editor = null;
+		this.field = null;
 
 		let me = this;
 		this.dialog.$wrapper.on("keydown", function (e) {
@@ -50,24 +50,19 @@ export class DropdownConsole {
 		return new Promise((r) => setTimeout(r, duration));
 	}
 
-	async wait_for_ace() {
-		// I can't find any other way to ensure that ace is loaded and ready
-		// This small delay shouldn't be noticable.
+	async wait_for_editor() {
 		let retry_count = 0;
-
-		while (retry_count++ < 10 && !this.editor) {
+		while (retry_count++ < 10 && !this.field) {
 			await this.sleep(25);
-			this.editor = this.dialog.get_field("console").editor;
+			const f = this.dialog.get_field("console");
+			if (f?.editor) this.field = f;
 		}
-
-		if (!this.editor) {
-			throw Error("Code editor not found");
-		}
+		if (!this.field) throw Error("Code editor not found");
 	}
 
 	async show() {
 		this.dialog.show();
-		await this.wait_for_ace();
+		await this.wait_for_editor();
 		this.bind_executer();
 		this.load_completions();
 		this.load_contextual_boilerplate();
@@ -89,30 +84,24 @@ export class DropdownConsole {
 
 		let current_code = this.dialog.get_value("console");
 		if (!current_code && default_code) {
-			this.dialog.get_field("console").editor?.insert(default_code);
+			this.field?.insert_at_cursor(default_code);
 		}
 	}
 
 	async bind_executer() {
 		let me = this;
-		const field = this.dialog.get_field("console");
-		let editor = field.editor;
-		editor.setKeyboardHandler(null); // sorry emacs/vim users
-		editor.commands.addCommand({
-			name: "execute_code",
-			bindKey: {
-				// Shortcut keys
-				win: "Ctrl-Enter",
-				mac: "Command-Enter",
-			},
-			exec: function (editor) {
+		// remove vim/emacs so Ctrl-Enter always works
+		this.field.clear_mode_extension();
+		this.field.add_keymap({
+			key: "Mod-Enter",
+			run() {
 				me.execute_code();
+				return true;
 			},
 		});
 	}
 
 	async execute_code() {
-		await this.sleep(50); // ace often takes time to push changes
 		this.dialog.set_value("output", "");
 		const output_field = this.dialog.get_field("output");
 		output_field.set_description("");

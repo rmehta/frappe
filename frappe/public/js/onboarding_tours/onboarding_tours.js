@@ -5,8 +5,9 @@ frappe.ui.OnboardingTour = class OnboardingTour {
 		this.last_element_clicked = null;
 	}
 
-	init_driver() {
-		this.driver = new frappe.Driver({
+	async init_driver() {
+		const Driver = await frappe.get_driver();
+		this.driver = new Driver({
 			className: "frappe-driver",
 			allowClose: false,
 			padding: 10,
@@ -72,7 +73,7 @@ frappe.ui.OnboardingTour = class OnboardingTour {
 
 	async init({ tour_name, start_step }) {
 		this.tour = await frappe.db.get_doc("Form Tour", tour_name);
-		this.init_driver();
+		await this.init_driver();
 		this.build_steps();
 		this.update_driver_steps();
 		if (!this.tour.track_steps) {

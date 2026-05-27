@@ -7,10 +7,11 @@ frappe.ui.form.ControlMarkdownEditor = class ControlMarkdownEditor extends (
 		if (this.markdown_container) return;
 
 		let editor_class = this.constructor.editor_class;
-		this.ace_editor_target.wrap(`<div class="${editor_class}-container">`);
+		this.editor_target.wrap(`<div class="${editor_class}-container">`);
 		this.markdown_container = this.$input_wrapper?.find(`.${editor_class}-container`);
 
-		this.editor.getSession().setUseWrapMode(true);
+		// enable line wrapping for markdown editing
+		this.editor_target.css("white-space", "pre-wrap");
 
 		this.showing_preview = false;
 		this.preview_toggle_btn = $(
@@ -24,7 +25,7 @@ frappe.ui.form.ControlMarkdownEditor = class ControlMarkdownEditor extends (
 
 			const $btn = $(e.target);
 			this.markdown_preview.toggle(!this.showing_preview);
-			this.ace_editor_target.toggle(this.showing_preview);
+			this.editor_target.toggle(this.showing_preview);
 
 			this.showing_preview = !this.showing_preview;
 
@@ -62,7 +63,7 @@ frappe.ui.form.ControlMarkdownEditor = class ControlMarkdownEditor extends (
 	}
 
 	setup_image_drop() {
-		this.ace_editor_target.on("drop", (e) => {
+		this.editor_target.on("drop", (e) => {
 			e.stopPropagation();
 			e.preventDefault();
 			let { dataTransfer } = e.originalEvent;
@@ -93,10 +94,7 @@ frappe.ui.form.ControlMarkdownEditor = class ControlMarkdownEditor extends (
 					if (this.frm && !this.frm.is_new()) {
 						this.frm.attachments.attachment_uploaded(file_doc);
 					}
-					this.editor.session.insert(
-						this.editor.getCursorPosition(),
-						`![](${encodeURI(file_doc.file_url)})`
-					);
+					this.insert_at_cursor(`![](${encodeURI(file_doc.file_url)})`);
 				},
 			});
 		});

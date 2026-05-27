@@ -4,8 +4,9 @@ frappe.ui.form.FormTour = class FormTour {
 		this.driver_steps = [];
 	}
 
-	init_driver() {
-		this.driver = new frappe.Driver({
+	async init_driver() {
+		const Driver = await frappe.get_driver();
+		this.driver = new Driver({
 			className: "frappe-driver",
 			allowClose: false,
 			padding: 10,
@@ -49,7 +50,7 @@ frappe.ui.form.FormTour = class FormTour {
 
 		if (on_finish) this.on_finish = on_finish;
 
-		this.init_driver();
+		await this.init_driver();
 		if (this.tour.include_name_field) this.include_name_field();
 		this.build_steps();
 		this.update_driver_steps();
