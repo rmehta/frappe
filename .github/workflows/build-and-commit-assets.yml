@@ -20,30 +20,34 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: apps/frappe
+
+      - name: Create bench structure
+        run: |
+          mkdir -p sites
+          echo "frappe" > sites/apps.txt
 
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: yarn
+          cache-dependency-path: apps/frappe/yarn.lock
 
       - name: Install JS dependencies
+        working-directory: apps/frappe
         run: yarn install --frozen-lockfile
 
-      - name: Create minimal bench structure
-        run: |
-          mkdir -p /tmp/bench/sites /tmp/bench/apps
-          echo "frappe" > /tmp/bench/sites/apps.txt
-          ln -s "$GITHUB_WORKSPACE" /tmp/bench/apps/frappe
-
       - name: Build assets (production)
-        env:
-          FRAPPE_BENCH_ROOT: /tmp/bench
+        working-directory: apps/frappe
         run: yarn run production
 
       - name: Package assets
+        working-directory: apps/frappe
         run: tar czf frappe-assets.tar.gz -C frappe/public dist
 
       - name: Upload to rolling release
+        working-directory: apps/frappe
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
