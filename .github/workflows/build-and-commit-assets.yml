@@ -38,6 +38,10 @@ jobs:
         working-directory: apps/frappe
         run: yarn install --frozen-lockfile
 
+      - name: Link node_modules into public/
+        working-directory: apps/frappe
+        run: ln -s "$PWD/node_modules" frappe/public/node_modules
+
       - name: Build assets (production)
         working-directory: apps/frappe
         run: yarn run production
